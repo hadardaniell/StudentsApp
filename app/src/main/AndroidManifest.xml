@@ -11,17 +11,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.StudentsApp">
+
+        <!-- Launcher: Students List -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.StudentsApp">
+            android:name=".ui.list.StudentsListActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Other screens -->
+       <activity android:name=".ui.newstudent.NewStudentActivity" android:exported="false" />
+        <activity android:name=".ui.details.StudentDetailsActivity" android:exported="false" />
+        <!--<activity android:name=".ui.edit.EditStudentActivity" android:exported="false" /> -->
+
     </application>
+
 
 </manifest>

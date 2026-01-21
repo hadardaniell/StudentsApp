@@ -4,29 +4,30 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.studentsapp.R
-import com.example.studentsapp.data.StudentsRepository
+import com.example.studentsapp.StudentAdapter
+import com.example.studentsapp.StudentDetailsActivity
+import com.example.studentsapp.StudentRepository
 import com.example.studentsapp.databinding.ActivityStudentsListBinding
-import com.example.studentsapp.model.Student
-import com.example.studentsapp.ui.details.StudentDetailsActivity
 import com.example.studentsapp.ui.newstudent.NewStudentActivity
-import com.example.studentsapp.util.Extras
 
 class StudentsListActivity : AppCompatActivity() {
-
     private lateinit var b: ActivityStudentsListBinding
-    private val adapter = StudentsAdapter { index ->
-        val i = Intent(this, StudentDetailsActivity::class.java)
-        i.putExtra(Extras.STUDENT_INDEX, index)
-        startActivity(i)
-    }
+    private lateinit var adapter: StudentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // LOAD SAVED DATA
+        StudentRepository.init(this)
+
         b = ActivityStudentsListBinding.inflate(layoutInflater)
         setContentView(b.root)
 
-        seedIfEmpty()
+        adapter = StudentAdapter { index ->
+            val intent = Intent(this, StudentDetailsActivity::class.java)
+            intent.putExtra("STUDENT_INDEX", index)
+            startActivity(intent)
+        }
 
         b.rvStudents.layoutManager = LinearLayoutManager(this)
         b.rvStudents.adapter = adapter
@@ -38,12 +39,6 @@ class StudentsListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapter.submitList(StudentsRepository.getAll())
-    }
-
-    private fun seedIfEmpty() {
-        if (StudentsRepository.getAll().isNotEmpty()) return
-        StudentsRepository.add(Student("123", "Alice", false, R.drawable.ic_student))
-        StudentsRepository.add(Student("456", "Bob", true, R.drawable.ic_student))
+        adapter.submitList(StudentRepository.students)
     }
 }

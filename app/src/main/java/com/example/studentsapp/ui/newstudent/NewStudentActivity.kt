@@ -3,31 +3,31 @@ package com.example.studentsapp.ui.newstudent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.studentsapp.R
-import com.example.studentsapp.data.StudentsRepository
+import com.example.studentsapp.Student
+import com.example.studentsapp.StudentRepository
 import com.example.studentsapp.databinding.ActivityNewStudentBinding
-import com.example.studentsapp.model.Student
 
 class NewStudentActivity : AppCompatActivity() {
-
-    private lateinit var b: ActivityNewStudentBinding
+    private lateinit var binding: ActivityNewStudentBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        b = ActivityNewStudentBinding.inflate(layoutInflater)
-        setContentView(b.root)
+        binding = ActivityNewStudentBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        b.btnSave.setOnClickListener {
-            val name = b.edtName.text.toString().trim()
-            val id = b.edtId.text.toString().trim()
+        binding.btnSave.setOnClickListener {
+            val name = binding.edtName.text.toString()
+            val id = binding.edtId.text.toString()
 
-            if (name.isEmpty() || id.isEmpty()) {
-                b.edtName.error = if (name.isEmpty()) "Required" else null
-                b.edtId.error = if (id.isEmpty()) "Required" else null
-                return@setOnClickListener
+            if (name.isNotBlank() && id.isNotBlank()) {
+                StudentRepository.students.add(Student(name, id, false, R.drawable.ic_student))
+
+                // PERSIST DATA
+                StudentRepository.saveData(this)
+
+                finish()
             }
-
-            StudentsRepository.add(Student(id, name, false, R.drawable.ic_student))
-            finish()
         }
+        binding.btnCancel.setOnClickListener { finish() }
     }
 }

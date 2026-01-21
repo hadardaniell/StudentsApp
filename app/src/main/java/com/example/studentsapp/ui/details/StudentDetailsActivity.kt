@@ -1,42 +1,40 @@
-package com.example.studentsapp.ui.details
+package com.example.studentsapp
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.studentsapp.data.StudentsRepository
 import com.example.studentsapp.databinding.ActivityStudentDetailsBinding
-//import com.example.studentsapp.ui.edit.EditStudentActivity
-import com.example.studentsapp.util.Extras
+import com.example.studentsapp.editstudent.EditStudentActivity
 
 class StudentDetailsActivity : AppCompatActivity() {
-
-    private lateinit var b: ActivityStudentDetailsBinding
+    private lateinit var binding: ActivityStudentDetailsBinding
     private var index: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        b = ActivityStudentDetailsBinding.inflate(layoutInflater)
-        setContentView(b.root)
+        binding = ActivityStudentDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        index = intent.getIntExtra(Extras.STUDENT_INDEX, -1)
+        index = intent.getIntExtra("STUDENT_INDEX", -1)
 
-        b.btnEdit.setOnClickListener {
-//            val i = Intent(this, EditStudentActivity::class.java)
-//            i.putExtra(Extras.STUDENT_INDEX, index)
-//            startActivity(i)
+        binding.btnEdit.setOnClickListener {
+            val intent = Intent(this, EditStudentActivity::class.java)
+            intent.putExtra("STUDENT_INDEX", index)
+            startActivity(intent)
+        }
+
+        binding.btnBack.setOnClickListener {
+            finish()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val student = StudentsRepository.getByIndex(index) ?: run {
-            finish()
-            return
-        }
-
-        b.img.setImageResource(student.imageResId)
-        b.txtName.text = student.name
-        b.txtId.text = "ID: ${student.id}"
-        b.txtChecked.text = "Checked: ${student.isChecked}"
+        val student = StudentRepository.students.getOrNull(index)
+        student?.let {
+            binding.txtName.text = it.name
+            binding.txtId.text = it.id
+            binding.txtChecked.text = if (it.isChecked) "Checked" else "Unchecked"
+        } ?: finish()
     }
 }

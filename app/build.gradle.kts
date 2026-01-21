@@ -7,13 +7,13 @@ plugins {
 
 android {
     namespace = "com.example.studentsapp"
-    compileSdk {
-        version = release(36)
-    }
+    // Bumped to 36 to match your dependencies' requirements
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.studentsapp"
         minSdk = 24
+        // Bumped to 36 to match compileSdk
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -55,6 +55,10 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
+
+    // GSON for saving student data
+    implementation("com.google.code.gson:gson:2.10.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

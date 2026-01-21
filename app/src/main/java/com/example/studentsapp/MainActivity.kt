@@ -1,48 +1,47 @@
 package com.example.studentsapp
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.studentsapp.ui.theme.StudentsAppTheme
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.studentsapp.StudentRepository
+import com.example.studentsapp.databinding.ActivityMainBinding
+import com.example.studentsapp.StudentDetailsActivity
+import com.example.studentsapp.ui.newstudent.NewStudentActivity
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var adapter: StudentAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            StudentsAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
 
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+        // 1. Initialize ViewBinding
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // 2. Setup the RecyclerView
+        // We pass a lambda function that opens the Details screen when a row is clicked
+        adapter = StudentAdapter { position ->
+            val intent = Intent(this, StudentDetailsActivity::class.java)
+            intent.putExtra("STUDENT_INDEX", position)
+            startActivity(intent)
+        }
+
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+
+        // 3. Setup the "Add Student" button
+        binding.addStudentBtn.setOnClickListener {
+            val intent = Intent(this, NewStudentActivity::class.java)
+            startActivity(intent)
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    StudentsAppTheme {
-        Greeting("Android")
+    override fun onResume() {
+        super.onResume()
+        // 4. Refresh the list every time we come back to this screen
+        adapter.notifyDataSetChanged()
     }
 }
